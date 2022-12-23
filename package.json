@@ -1,0 +1,39 @@
+{
+  "name": "crud_api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "npx nodemon",
+    "build": "npx tsc",
+    "start": "npm run build && node dist/main",
+    "lint": "npx eslint ./src",
+    "format": "npx eslint ./src --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rybakN/CRUD_API.git"
+  },
+  "author": "rybakN",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rybakN/CRUD_API/issues"
+  },
+  "homepage": "https://github.com/rybakN/CRUD_API#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.17",
+    "@typescript-eslint/eslint-plugin": "^5.47.0",
+    "@typescript-eslint/parser": "^5.47.0",
+    "eslint": "^8.30.0",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "uuid": "^9.0.0"
+  }
+}
