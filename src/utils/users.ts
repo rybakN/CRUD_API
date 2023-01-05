@@ -1,8 +1,15 @@
-export interface User {
+export class User {
   id: string;
   username: string;
   age: number;
-  hobbies: Array<string> | null;
+  hobbies: string[];
+
+  constructor(id: string, username: string, age: number, hobbies: string[]) {
+    this.id = id;
+    this.username = username;
+    this.age = age;
+    this.hobbies = hobbies;
+  }
 }
 
 export const Users: Map<string, User> = new Map();

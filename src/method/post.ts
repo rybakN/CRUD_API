@@ -1,28 +1,32 @@
 import { ServerResponse, IncomingMessage } from 'http';
-import { v4 as uuidv4 } from 'uuid';
 import { MethodHandler } from './methodCombiner.js';
-import { parseUrl } from '../parseUrl.js';
-import { User } from '../users.js';
+import { User, Users } from '../utils/users.js';
+import { checkUser } from '../utils/checkUser.js';
+import { createUserObj } from '../utils/createUserObj.js';
 
 export class Post implements MethodHandler {
   static nameMethod = 'POST';
 
   public handler(resp: ServerResponse, req: IncomingMessage) {
-    const urlArr: string[] = parseUrl(req.url!);
+    let body: string = '';
 
-    if (urlArr.length === 3) {
-      let body: any = '';
-      req.on('data', (data) => {
-        body += data;
-        console.log(body);
-      });
-      resp.statusCode = 400;
-      resp.setHeader('Content-type', 'text/html');
-      resp.end(body);
-    } else {
-      resp.statusCode = 404;
-      resp.setHeader('Content-type', 'text/html');
-      resp.end(`<h1>Invalid rout</h1>`);
-    }
+    req.on('data', (data) => {
+      body += data.toString();
+    });
+
+    req.on('end', () => {
+      const user: User | null = createUserObj(body);
+
+      if (checkUser(user)) {
+        Users.set(user!.id, user!);
+        resp.statusCode = 201;
+        resp.setHeader('Content-type', 'JSON');
+        resp.end(JSON.stringify(user));
+      } else {
+        resp.statusCode = 400;
+        resp.setHeader('Content-type', 'text/html');
+        resp.end(`<h1>Invalid BODY</h1>`);
+      }
+    });
   }
 }

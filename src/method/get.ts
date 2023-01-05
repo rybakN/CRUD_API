@@ -1,7 +1,7 @@
 import { MethodHandler } from './methodCombiner.js';
 import { ServerResponse, IncomingMessage } from 'http';
-import { getAllUsers, User, Users } from '../users.js';
-import { parseUrl } from '../parseUrl.js';
+import { getAllUsers, User, Users } from '../utils/users.js';
+import { parseUrl } from '../utils/parseUrl.js';
 
 export class Get implements MethodHandler {
   static nameMethod = 'GET';
@@ -11,18 +11,19 @@ export class Get implements MethodHandler {
 
     if (urlArr.length === 3) {
       const allUsers = getAllUsers();
-      resp.setHeader('Content-type', 'text/html');
+      resp.statusCode = 200;
+      resp.setHeader('Content-type', 'JSON');
       resp.end(JSON.stringify(allUsers));
-    } else if (urlArr.length === 4 && urlArr[3] !== '') {
-      const userId = urlArr[3];
-      if (userId) {
+    } else if (urlArr[3] !== '') {
+      const user = this.getUser(urlArr[3]);
+      if (user) {
         resp.statusCode = 200;
-        resp.setHeader('Content-type', 'text/html');
-        resp.end(JSON.stringify(userId));
+        resp.setHeader('Content-type', 'JSON');
+        resp.end(JSON.stringify(user));
       } else {
         resp.statusCode = 404;
         resp.setHeader('Content-type', 'text/html');
-        resp.end(`<h1>User with id: ${userId} doesn't exist</h1>`);
+        resp.end(`<h1>User with id: ${urlArr[3]} doesn't exist</h1>`);
       }
     } else {
       resp.statusCode = 400;
