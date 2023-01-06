@@ -5,6 +5,8 @@ import { Put } from './put.js';
 import { Post } from './post.js';
 import { Delete } from './delete.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
+import { setResponse } from '../utils/setResponse.js';
+import * as responseMsg from '../utils/msgForResponse.js';
 
 export interface MethodHandler {
   handler: (resp: ServerResponse, req: http.IncomingMessage) => void;
@@ -27,14 +29,14 @@ export class MethodCombiner {
       if (handler) {
         handler.handler(resp, req);
       } else {
-        resp.statusCode = HttpStatusCode.NOT_FOUND;
-        resp.setHeader('Content-type', 'text/html');
-        resp.end(`${req.method} method is not processed`);
+        setResponse(
+          resp,
+          HttpStatusCode.NOT_IMPLEMENTED,
+          responseMsg.methodNotProcessed(HttpStatusCode.NOT_IMPLEMENTED, req.method!),
+        );
       }
     } catch (e) {
-      resp.statusCode = HttpStatusCode.INTERNAL_SERVER;
-      resp.setHeader('Content-type', 'text/html');
-      resp.end(`<h1>INTERNAL_SERVER</h1>`);
+      setResponse(resp, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
     }
   }
 }
