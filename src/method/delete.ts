@@ -3,6 +3,8 @@ import { ServerResponse, IncomingMessage } from 'http';
 import { parseUrl } from '../utils/parseUrl.js';
 import { Users } from '../utils/users.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
+import { setResponse } from '../utils/setResponse.js';
+import * as responseMsg from '../utils/msgForResponse.js';
 
 export class Delete implements MethodHandler {
   static nameMethod = 'DELETE';
@@ -11,26 +13,20 @@ export class Delete implements MethodHandler {
     try {
       const userId: string = parseUrl(req.url!)[3];
 
-      if (userId.length) {
-        if (Users.has(userId)) {
-          Users.delete(userId);
-          resp.statusCode = HttpStatusCode.DELETE_USER;
-          resp.setHeader('Content-type', 'text/html');
-          resp.end(`<h1>User with ID: ${userId} deleted</h1>`);
-        } else {
-          resp.statusCode = HttpStatusCode.NOT_FOUND;
-          resp.setHeader('Content-type', 'text/html');
-          resp.end(`<h1>User with id: ${userId} doesn't exist</h1>`);
-        }
-      } else {
-        resp.statusCode = HttpStatusCode.BAD_REQUEST;
-        resp.setHeader('Content-type', 'text/html');
-        resp.end(`<h1>Invalid ID</h1>`);
+      if (!userId.length) {
+        setResponse(resp, HttpStatusCode.BAD_REQUEST, responseMsg.invalidId(HttpStatusCode.BAD_REQUEST));
+        return;
       }
+
+      if (!Users.has(userId)) {
+        setResponse(resp, HttpStatusCode.NOT_FOUND, responseMsg.userExist(HttpStatusCode.NOT_FOUND, userId));
+        return;
+      }
+
+      Users.delete(userId);
+      setResponse(resp, HttpStatusCode.DELETE_USER, responseMsg.deleteUser(HttpStatusCode.DELETE_USER, userId));
     } catch (e) {
-      resp.statusCode = HttpStatusCode.INTERNAL_SERVER;
-      resp.setHeader('Content-type', 'text/html');
-      resp.end(`<h1>INTERNAL_SERVER</h1>`);
+      setResponse(resp, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
     }
   }
 }

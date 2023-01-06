@@ -3,6 +3,8 @@ import { ServerResponse, IncomingMessage } from 'http';
 import { getAllUsers, User, Users } from '../utils/users.js';
 import { parseUrl } from '../utils/parseUrl.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
+import { setResponse } from '../utils/setResponse.js';
+import * as responseMsg from '../utils/msgForResponse.js';
 
 export class Get implements MethodHandler {
   static nameMethod = 'GET';
@@ -12,24 +14,16 @@ export class Get implements MethodHandler {
 
     if (urlArr.length === 3) {
       const allUsers = getAllUsers();
-      resp.statusCode = HttpStatusCode.OK;
-      resp.setHeader('Content-type', 'JSON');
-      resp.end(JSON.stringify(allUsers));
+      setResponse(resp, HttpStatusCode.OK, JSON.stringify(allUsers));
     } else if (urlArr[3] !== '') {
       const user = this.getUser(urlArr[3]);
-      if (user) {
-        resp.statusCode = HttpStatusCode.OK;
-        resp.setHeader('Content-type', 'JSON');
-        resp.end(JSON.stringify(user));
-      } else {
-        resp.statusCode = HttpStatusCode.NOT_FOUND;
-        resp.setHeader('Content-type', 'text/html');
-        resp.end(`<h1>User with id: ${urlArr[3]} doesn't exist</h1>`);
+      if (!user) {
+        setResponse(resp, HttpStatusCode.NOT_FOUND, responseMsg.userExist(HttpStatusCode.NOT_FOUND, urlArr[3]));
+        return;
       }
+      setResponse(resp, HttpStatusCode.OK, JSON.stringify(user));
     } else {
-      resp.statusCode = HttpStatusCode.BAD_REQUEST;
-      resp.setHeader('Content-type', 'text/html');
-      resp.end(`<h1>Invalid ID</h1>`);
+      setResponse(resp, HttpStatusCode.BAD_REQUEST, responseMsg.invalidId(HttpStatusCode.BAD_REQUEST));
     }
   }
 

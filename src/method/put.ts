@@ -5,6 +5,8 @@ import { checkUser } from '../utils/checkUser.js';
 import { createUserObj } from '../utils/createUserObj.js';
 import { parseUrl } from '../utils/parseUrl.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
+import { setResponse } from '../utils/setResponse.js';
+import * as responseMsg from '../utils/msgForResponse.js';
 
 export class Put implements MethodHandler {
   static nameMethod = 'PUT';
@@ -16,9 +18,7 @@ export class Put implements MethodHandler {
       try {
         body += data.toString();
       } catch (e) {
-        resp.statusCode = HttpStatusCode.INTERNAL_SERVER;
-        resp.setHeader('Content-type', 'text/html');
-        resp.end(`<h1>INTERNAL_SERVER</h1>`);
+        setResponse(resp, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
       }
     });
 
@@ -26,32 +26,26 @@ export class Put implements MethodHandler {
       try {
         const userId: string = parseUrl(req.url!)[3];
         if (!userId.length) {
-          if (Users.has(userId)) {
-            const user: User | null = createUserObj(body, userId);
-            if (checkUser(user!)) {
-              Users.set(userId, user!);
-              resp.statusCode = HttpStatusCode.OK;
-              resp.setHeader('Content-type', 'JSON');
-              resp.end(JSON.stringify(user));
-            } else {
-              resp.statusCode = HttpStatusCode.BAD_REQUEST;
-              resp.setHeader('Content-type', 'text/html');
-              resp.end(`<h1>Invalid BODY</h1>`);
-            }
-          } else {
-            resp.statusCode = HttpStatusCode.NOT_FOUND;
-            resp.setHeader('Content-type', 'text/html');
-            resp.end(`<h1>User with id: ${userId} doesn't exist</h1>`);
-          }
-        } else {
-          resp.statusCode = HttpStatusCode.BAD_REQUEST;
-          resp.setHeader('Content-type', 'text/html');
-          resp.end(`<h1>Invalid ID</h1>`);
+          setResponse(resp, HttpStatusCode.BAD_REQUEST, responseMsg.invalidId(HttpStatusCode.BAD_REQUEST));
+          return;
         }
+
+        if (!Users.has(userId)) {
+          setResponse(resp, HttpStatusCode.NOT_FOUND, responseMsg.userExist(HttpStatusCode.NOT_FOUND, userId));
+          return;
+        }
+
+        const user: User | null = createUserObj(body, userId);
+
+        if (!checkUser(user!)) {
+          setResponse(resp, HttpStatusCode.BAD_REQUEST, responseMsg.invalidBody(HttpStatusCode.BAD_REQUEST));
+          return;
+        }
+
+        Users.set(userId, user!);
+        setResponse(resp, HttpStatusCode.OK, JSON.stringify(user));
       } catch (e) {
-        resp.statusCode = HttpStatusCode.INTERNAL_SERVER;
-        resp.setHeader('Content-type', 'text/html');
-        resp.end(`<h1>INTERNAL_SERVER</h1>`);
+        setResponse(resp, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
       }
     });
   }
