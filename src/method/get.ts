@@ -2,6 +2,7 @@ import { MethodHandler } from './methodCombiner.js';
 import { ServerResponse, IncomingMessage } from 'http';
 import { getAllUsers, User, Users } from '../utils/users.js';
 import { parseUrl } from '../utils/parseUrl.js';
+import { HttpStatusCode } from '../utils/httpStatusCode.js';
 
 export class Get implements MethodHandler {
   static nameMethod = 'GET';
@@ -11,22 +12,22 @@ export class Get implements MethodHandler {
 
     if (urlArr.length === 3) {
       const allUsers = getAllUsers();
-      resp.statusCode = 200;
+      resp.statusCode = HttpStatusCode.OK;
       resp.setHeader('Content-type', 'JSON');
       resp.end(JSON.stringify(allUsers));
     } else if (urlArr[3] !== '') {
       const user = this.getUser(urlArr[3]);
       if (user) {
-        resp.statusCode = 200;
+        resp.statusCode = HttpStatusCode.OK;
         resp.setHeader('Content-type', 'JSON');
         resp.end(JSON.stringify(user));
       } else {
-        resp.statusCode = 404;
+        resp.statusCode = HttpStatusCode.NOT_FOUND;
         resp.setHeader('Content-type', 'text/html');
         resp.end(`<h1>User with id: ${urlArr[3]} doesn't exist</h1>`);
       }
     } else {
-      resp.statusCode = 400;
+      resp.statusCode = HttpStatusCode.BAD_REQUEST;
       resp.setHeader('Content-type', 'text/html');
       resp.end(`<h1>Invalid ID</h1>`);
     }

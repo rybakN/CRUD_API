@@ -17,7 +17,7 @@ const server = http.createServer((request: http.IncomingMessage, response: Serve
   process.on('uncaughtException', (error) => {
     response.statusCode = 500;
     response.setHeader('Content-type', 'text/html');
-    response.end(`<h1>ERRRRRR</h1> ${error}`);
+    response.end(`<h1>INTERNAL_SERVER</h1> ${error}`);
   });
 });
 
