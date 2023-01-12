@@ -17,6 +17,10 @@ export const createUserObj = (body: string, id?: string): User | null => {
     _id = uuidv4();
   }
 
+  if (typeof _body.username !== 'string') return null;
+
+  if (typeof _body.age !== 'number') return null;
+
   if (Array.isArray(_body.hobbies)) {
     return new User(_id, _body!.username, _body!.age, _body!.hobbies);
   } else return null;

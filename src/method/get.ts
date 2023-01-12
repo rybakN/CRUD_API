@@ -9,7 +9,7 @@ import * as responseMsg from '../utils/msgForResponse.js';
 export class Get implements MethodHandler {
   static nameMethod = 'GET';
 
-  public handler(resp: ServerResponse, req: IncomingMessage) {
+  public handler(resp: ServerResponse, req: IncomingMessage): void {
     const urlArr: string[] = parseUrl(req.url!);
 
     if (urlArr.length === 3) {

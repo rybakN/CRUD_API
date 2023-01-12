@@ -22,7 +22,7 @@ export class Put implements MethodHandler {
       }
     });
 
-    req.on('end', () => {
+    req.on('end', (): void => {
       try {
         const userId: string = parseUrl(req.url!)[3];
         if (!userId.length) {

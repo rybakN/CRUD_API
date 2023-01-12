@@ -23,8 +23,8 @@ export class MethodCombiner {
     this.method.set(Put.nameMethod, new Put());
   }
 
-  public handlerReq(resp: ServerResponse, req: http.IncomingMessage) {
-    console.log(cluster.worker?.id, req.method);
+  public handlerReq(resp: ServerResponse, req: http.IncomingMessage): void {
+    console.log(`Process #${cluster.worker?.process.pid}, Method: ${req.method}`);
     try {
       const handler = this.method.get(req.method!);
       if (handler) {

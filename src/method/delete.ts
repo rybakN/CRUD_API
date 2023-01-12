@@ -9,7 +9,7 @@ import * as responseMsg from '../utils/msgForResponse.js';
 export class Delete implements MethodHandler {
   static nameMethod = 'DELETE';
 
-  public handler(resp: ServerResponse, req: IncomingMessage) {
+  public handler(resp: ServerResponse, req: IncomingMessage): void {
     try {
       const userId: string = parseUrl(req.url!)[3];
 

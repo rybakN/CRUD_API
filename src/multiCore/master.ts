@@ -1,7 +1,7 @@
 import * as os from 'os';
 import cluster, { Worker } from 'cluster';
 import * as http from 'http';
-import { balancer } from './balancer.js';
+import { loadBalancer } from './loadBalancer.js';
 import { Users } from '../utils/users.js';
 import { updateBD } from './updateBD.js';
 import { stringifyMap } from './stringyfyMap.js';
@@ -60,7 +60,7 @@ const setOptions = (
     headers: req.headers,
     method: req.method!,
     path: req.url!,
-    port: balancer(workers, PORT),
+    port: loadBalancer(workers, PORT),
   };
 };
 

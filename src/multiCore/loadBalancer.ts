@@ -1,6 +1,6 @@
 import { Worker } from 'cluster';
 
-export const balancer = (workers: Worker[], PORT: string): number => {
+export const loadBalancer = (workers: Worker[], PORT: string): number => {
   let curWorker = Number(process.env.curWorker);
   const workersId: number[] = [];
   for (let i = 0; i < workers.length; i++) {
@@ -8,7 +8,6 @@ export const balancer = (workers: Worker[], PORT: string): number => {
   }
   if (!curWorker && curWorker != 0) {
     process.env.curWorker = '0';
-    console.log(workersId);
     return Number(PORT) + workersId[0];
   }
 
