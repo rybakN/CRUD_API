@@ -7,6 +7,7 @@ import { Delete } from './delete.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
 import { setResponse } from '../utils/setResponse.js';
 import * as responseMsg from '../utils/msgForResponse.js';
+import cluster from 'cluster';
 
 export interface MethodHandler {
   handler: (resp: ServerResponse, req: http.IncomingMessage) => void;
@@ -23,7 +24,7 @@ export class MethodCombiner {
   }
 
   public handlerReq(resp: ServerResponse, req: http.IncomingMessage) {
-    console.log(req.method);
+    console.log(cluster.worker?.id, req.method);
     try {
       const handler = this.method.get(req.method!);
       if (handler) {
