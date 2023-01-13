@@ -1,4 +1,4 @@
-import supertest, { Response } from 'supertest';
+import supertest from 'supertest';
 import * as dotenv from 'dotenv';
 import { User } from '../utils/users.js';
 dotenv.config();
@@ -14,13 +14,13 @@ const userBody: Omit<User, 'id'> = {
 let userID: string;
 
 describe('should CRUD API', () => {
-  test('should status 200, get all users ', async () => {
-    const response = await supertest(baseURL).get('/api/users');
+  test('should status 200', async () => {
+    const response: supertest.Response = await supertest(baseURL).get('/api/users');
     expect(response.statusCode).toBe(200);
   });
 
   test('should status 201, response.body === userBody', async () => {
-    const response: Response = await supertest(baseURL).post('/api/users').send(userBody);
+    const response: supertest.Response = await supertest(baseURL).post('/api/users').send(userBody);
     const body: User = JSON.parse(response.text);
     userID = body.id;
 
@@ -29,7 +29,7 @@ describe('should CRUD API', () => {
   });
 
   test('should status 200, response.body === userBody', async () => {
-    const response: Response = await supertest(baseURL).put(`/api/users/${userID}`).send(userBody);
+    const response: supertest.Response = await supertest(baseURL).put(`/api/users/${userID}`).send(userBody);
     const body: User = JSON.parse(response.text);
     let userIdResp = body.id;
 
@@ -39,13 +39,13 @@ describe('should CRUD API', () => {
   });
 
   test('should status 204', async () => {
-    const response: Response = await supertest(baseURL).del(`/api/users/${userID}`);
+    const response: supertest.Response = await supertest(baseURL).del(`/api/users/${userID}`);
 
     expect(response.statusCode).toBe(204);
   });
 
   test('should status 404', async () => {
-    const response: Response = await supertest(baseURL).get(`/api/users/${userID}`);
+    const response: supertest.Response = await supertest(baseURL).get(`/api/users/${userID}`);
 
     expect(response.statusCode).toBe(404);
   });
