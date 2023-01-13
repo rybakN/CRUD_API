@@ -1,10 +1,10 @@
 import * as http from 'http';
-import { MethodCombiner } from './method/methodCombiner.js';
+import { MethodCombiner } from '../method/methodCombiner.js';
 import { ServerResponse } from 'http';
-import { checkURL } from './utils/checkURL.js';
-import { setResponse } from './utils/setResponse.js';
-import { HttpStatusCode } from './utils/httpStatusCode.js';
-import * as responseMsg from './utils/msgForResponse.js';
+import { checkURL } from '../utils/checkURL.js';
+import { setResponse } from '../utils/setResponse.js';
+import { HttpStatusCode } from '../utils/httpStatusCode.js';
+import * as responseMsg from '../utils/msgForResponse.js';
 
 export const server = http.createServer((req: http.IncomingMessage, res: ServerResponse) => {
   if (!checkURL(req.url!)) {

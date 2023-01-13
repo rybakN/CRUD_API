@@ -1,5 +1,5 @@
 import cluster from 'cluster';
-import { server } from '../server.js';
+import { server } from '../server/server.js';
 import { getWorkerBD, updateBD } from './updateBD.js';
 
 export const workerProcess = (PORT: string): void => {
