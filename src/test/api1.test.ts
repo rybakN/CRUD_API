@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import * as dotenv from 'dotenv';
-import { User } from '../utils/users.js';
+import { User } from '../utils/users';
 dotenv.config();
 
 const baseURL: string = `http://localhost:` + process.env.SERVER_PORT;
@@ -13,7 +13,7 @@ const userBody: Omit<User, 'id'> = {
 
 let userID: string;
 
-describe('should CRUD API', () => {
+describe('should CRUD API 1', () => {
   test('should status 200', async () => {
     const response: supertest.Response = await supertest(baseURL).get('/api/users');
     expect(response.statusCode).toBe(200);

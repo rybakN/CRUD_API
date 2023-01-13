@@ -9,7 +9,7 @@ const userBody: { username: string; age: number } = {
   age: 8,
 };
 
-describe('should CRUD API', () => {
+describe('should CRUD API 2', () => {
   test('should status 404', async () => {
     const response: supertest.Response = await supertest(baseURL).get('/api/');
     expect(response.statusCode).toBe(404);

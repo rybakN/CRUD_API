@@ -1,5 +1,5 @@
 {
-  "bail": 1,
+  "bail": true,
   "verbose": true,
   "extensionsToTreatAsEsm": [".ts"],
   "moduleNameMapper": {
