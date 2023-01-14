@@ -7,6 +7,7 @@ import { parseUrl } from '../utils/parseUrl.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
 import { setResponse } from '../utils/setResponse.js';
 import * as responseMsg from '../utils/msgForResponse.js';
+import { checkUUID } from '../utils/checkUUID.js';
 
 export class Put implements MethodHandler {
   static nameMethod = 'PUT';
@@ -25,7 +26,8 @@ export class Put implements MethodHandler {
     req.on('end', (): void => {
       try {
         const userId: string = parseUrl(req.url!)[3];
-        if (!userId.length) {
+
+        if (!checkUUID(userId)) {
           setResponse(resp, HttpStatusCode.BAD_REQUEST, responseMsg.invalidId(HttpStatusCode.BAD_REQUEST));
           return;
         }
@@ -47,6 +49,10 @@ export class Put implements MethodHandler {
       } catch (e) {
         setResponse(resp, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
       }
+    });
+
+    req.on('error', (err) => {
+      setResponse(resp, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
     });
   }
 }

@@ -5,6 +5,7 @@ import { Users } from '../utils/users.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
 import { setResponse } from '../utils/setResponse.js';
 import * as responseMsg from '../utils/msgForResponse.js';
+import { checkUUID } from '../utils/checkUUID.js';
 
 export class Delete implements MethodHandler {
   static nameMethod = 'DELETE';
@@ -13,7 +14,7 @@ export class Delete implements MethodHandler {
     try {
       const userId: string = parseUrl(req.url!)[3];
 
-      if (!userId.length) {
+      if (!checkUUID(userId)) {
         setResponse(resp, HttpStatusCode.BAD_REQUEST, responseMsg.invalidId(HttpStatusCode.BAD_REQUEST));
         return;
       }

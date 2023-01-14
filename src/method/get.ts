@@ -5,6 +5,7 @@ import { parseUrl } from '../utils/parseUrl.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
 import { setResponse } from '../utils/setResponse.js';
 import * as responseMsg from '../utils/msgForResponse.js';
+import { checkUUID } from '../utils/checkUUID.js';
 
 export class Get implements MethodHandler {
   static nameMethod = 'GET';
@@ -16,6 +17,10 @@ export class Get implements MethodHandler {
       const allUsers = getAllUsers();
       setResponse(resp, HttpStatusCode.OK, JSON.stringify(allUsers));
     } else if (urlArr[3] !== '') {
+      if (!checkUUID(urlArr[3])) {
+        setResponse(resp, HttpStatusCode.BAD_REQUEST, responseMsg.invalidId(HttpStatusCode.BAD_REQUEST));
+        return;
+      }
       const user = this.getUser(urlArr[3]);
       if (!user) {
         setResponse(resp, HttpStatusCode.NOT_FOUND, responseMsg.userExist(HttpStatusCode.NOT_FOUND, urlArr[3]));

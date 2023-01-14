@@ -8,7 +8,7 @@ import * as responseMsg from '../utils/msgForResponse.js';
 
 export const server = http.createServer((req: http.IncomingMessage, res: ServerResponse) => {
   if (!checkURL(req.url!)) {
-    setResponse(res, HttpStatusCode.NOT_FOUND, responseMsg.userExist(HttpStatusCode.NOT_FOUND, req.url!));
+    setResponse(res, HttpStatusCode.NOT_FOUND, responseMsg.routExist(HttpStatusCode.NOT_FOUND, req.url!));
     return;
   }
 

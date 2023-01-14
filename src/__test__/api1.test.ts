@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import * as dotenv from 'dotenv';
-import { User } from '../utils/users';
+import { User } from '../utils/users.js';
 dotenv.config();
 
 const baseURL: string = `http://localhost:` + process.env.SERVER_PORT;

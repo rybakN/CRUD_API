@@ -5,6 +5,9 @@ import { loadBalancer } from './loadBalancer.js';
 import { Users } from '../utils/users.js';
 import { updateBD } from './updateBD.js';
 import { stringifyMap } from './stringyfyMap.js';
+import { setResponse } from '../utils/setResponse.js';
+import { HttpStatusCode } from '../utils/httpStatusCode.js';
+import * as responseMsg from '../utils/msgForResponse.js';
 
 const workers: Worker[] = [];
 export const masterProcess = (PORT: string): void => {
@@ -19,31 +22,43 @@ export const masterProcess = (PORT: string): void => {
     .createServer((req: http.IncomingMessage, res: http.ServerResponse): void => {
       let postData = '';
       req.on('data', (chunk): void => {
-        postData += chunk;
+        try {
+          postData += chunk;
+        } catch {
+          setResponse(res, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
+        }
       });
       req.on('end', (): void => {
-        const _options = setOptions(req, PORT);
-        const curWorker = findCurWorker(workers, _options.port - Number(PORT));
+        try {
+          const _options = setOptions(req, PORT);
+          const curWorker = findCurWorker(workers, _options.port - Number(PORT));
 
-        curWorker.send(JSON.stringify(stringifyMap(Users)));
+          curWorker.send(JSON.stringify(stringifyMap(Users)));
 
-        http
-          .request(_options, (response: http.IncomingMessage): void => {
-            let dataContainer = '';
-            response.on('data', (chunk: any): void => {
-              dataContainer += chunk;
-            });
-            response.on('end', (): void => {
-              res.setHeader('Content-type', 'JSON');
-              res.statusCode = response.statusCode!;
-              res.end(dataContainer);
-              curWorker.send('getDB');
-              curWorker.on('message', (msg: string): void => {
-                updateBD(msg);
+          http
+            .request(_options, (response: http.IncomingMessage): void => {
+              let dataContainer = '';
+              response.on('data', (chunk: any): void => {
+                dataContainer += chunk;
               });
-            });
-          })
-          .write(postData);
+              response.on('end', (): void => {
+                res.setHeader('Content-type', 'application/json');
+                res.statusCode = response.statusCode!;
+                res.end(dataContainer);
+                curWorker.send('getDB');
+                curWorker.on('message', (msg: string): void => {
+                  updateBD(msg);
+                });
+              });
+            })
+            .write(postData);
+        } catch {
+          setResponse(res, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
+        }
+      });
+
+      req.on('error', (err) => {
+        setResponse(res, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
       });
     })
     .listen(PORT, (): void => {

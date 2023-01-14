@@ -17,6 +17,8 @@ export const createUserObj = (body: string, id?: string): User | null => {
     _id = uuidv4();
   }
 
+  if (Object.keys(_body).length > 3) return null;
+
   if (typeof _body.username !== 'string') return null;
 
   if (typeof _body.age !== 'number') return null;

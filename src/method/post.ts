@@ -6,11 +6,17 @@ import { createUserObj } from '../utils/createUserObj.js';
 import { HttpStatusCode } from '../utils/httpStatusCode.js';
 import { setResponse } from '../utils/setResponse.js';
 import * as responseMsg from '../utils/msgForResponse.js';
+import { parseUrl } from '../utils/parseUrl.js';
 
 export class Post implements MethodHandler {
   static nameMethod = 'POST';
 
   public handler(resp: ServerResponse, req: IncomingMessage): void {
+    const urlArr: string[] = parseUrl(req.url!);
+    if (urlArr.length > 3) {
+      setResponse(resp, HttpStatusCode.NOT_FOUND, responseMsg.routExist(HttpStatusCode.NOT_FOUND, req.url!));
+      return;
+    }
     let body: string = '';
 
     req.on('data', (data) => {
@@ -34,6 +40,10 @@ export class Post implements MethodHandler {
       } catch (e) {
         setResponse(resp, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
       }
+    });
+
+    req.on('error', (err) => {
+      setResponse(resp, HttpStatusCode.INTERNAL_SERVER, responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER));
     });
   }
 }
