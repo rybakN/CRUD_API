@@ -37,19 +37,20 @@ export const masterProcess = (PORT: string): void => {
 
           http
             .request(_options, (response: http.IncomingMessage): void => {
-              let dataContainer = '';
-              response.on('data', (chunk: any): void => {
-                dataContainer += chunk;
-              });
-              response.on('end', (): void => {
+              try {
                 res.setHeader('Content-type', 'application/json');
-                res.statusCode = response.statusCode!;
-                res.end(dataContainer);
+                response.pipe(res);
                 curWorker.send('getDB');
                 curWorker.on('message', (msg: string): void => {
                   updateBD(msg);
                 });
-              });
+              } catch {
+                setResponse(
+                  res,
+                  HttpStatusCode.INTERNAL_SERVER,
+                  responseMsg.internalServer(HttpStatusCode.INTERNAL_SERVER),
+                );
+              }
             })
             .write(postData);
         } catch {

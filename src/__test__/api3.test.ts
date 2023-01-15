@@ -13,12 +13,16 @@ const userBody: Omit<User, 'id'> = {
 
 describe('should CRUD API 3', () => {
   test("should status 404, user with uuid doesn't exist", async () => {
-    const response: supertest.Response = await supertest(baseURL).get('/api/users/123321');
+    const response: supertest.Response = await supertest(baseURL).get(
+      '/api/users/e9d916bf-4700-4b01-a9bd-656fc6df1d04',
+    );
     expect(response.statusCode).toBe(404);
   });
 
   test("should status 404, user with uuid doesn't exist", async () => {
-    const response: supertest.Response = await supertest(baseURL).put('/api/users/123321').send(userBody);
+    const response: supertest.Response = await supertest(baseURL)
+      .put('/api/users/e9d916bf-4700-4b01-a9bd-656fc6df1d04')
+      .send(userBody);
 
     expect(response.statusCode).toBe(404);
   });
