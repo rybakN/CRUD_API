@@ -76,7 +76,7 @@ Implemented simple CRUD API using in-memory database underneath.
   ```
 
 ## Test Application
--Running tests:
+-Running tests (**the app must be already run**):
   ```
       npm run test
   ```
